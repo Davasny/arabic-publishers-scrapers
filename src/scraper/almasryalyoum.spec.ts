@@ -1,0 +1,61 @@
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { connect, PageWithCursor, ConnectResult } from "puppeteer-real-browser";
+import { AlmasryAlyoum, convertStringToDate } from "./almasryalyoum";
+import { GERD } from "../search/i18n";
+import { SearchResult } from "./publisherPage";
+
+describe("Check AlmasryAlyoum helpers", () => {
+  it("Checks if date string is parsed correctly PM", () => {
+    const result = convertStringToDate("12/10/2024 3:29:39 PM")
+    expect(result).toEqual(new Date("2024-12-10T15:29:39.000Z"))
+  })
+
+  it("Checks if date string is parsed correctly AM", () => {
+    const result = convertStringToDate("5/20/2023 2:17:02 AM")
+    expect(result).toEqual(new Date("2023-05-20T02:17:02.000Z"))
+  })
+})
+
+describe("Check AlmasryAlyoum scraper", async () => {
+  let page: PageWithCursor;
+  let browser: ConnectResult["browser"];
+
+  beforeAll(async () => {
+    const result = await connect({
+      headless: false,
+      turnstile: true,
+    });
+
+    page = result.page;
+    browser = result.browser;
+    await page.setViewport({ width: 1024, height: 1024 });
+  }, 30_000);
+
+  afterAll(async () => {
+    await browser.close();
+  }, 30_000);
+
+  it("Checks if search page is parsed correctly", async () => {
+    const aa = new AlmasryAlyoum(page);
+    const searchResults = await aa.getSearchResult(GERD.fullNameArabic);
+
+    expect(searchResults.length).toBe(12);
+  }, 30_000);
+
+  it("Checks if article page is parsed correctly", async () => {
+    const aa = new AlmasryAlyoum(page);
+
+    const searchResult: SearchResult = {
+      imagePath:
+        "https://mediaaws.almasryalyoum.com/news/small/2024/09/01/2475851_0.jpg",
+      title: "هل بدأت إثيوبيا بتفريغ سد النهضة؟.. عباس شراقي يوضح",
+      url: "https://www.almasryalyoum.com/news/details/3326339",
+    };
+
+    const article = await aa.getArticle(searchResult);
+
+    expect(article.author).toBe("بسام رمضان")
+    expect(article.paragraphs.length).toBe(9);
+    expect(article.publishDate).toBe("2024-12-10T15:29:39.000Z")
+  }, 30_000);
+});
