@@ -2,46 +2,6 @@ import { PageWithCursor } from "puppeteer-real-browser";
 import { Article, PublisherPage, SearchResult } from "./publisherPage";
 import { arabicMonths } from "../search/consts";
 
-export function convertArabicDateToJSDate(arabicDateString: string) {
-  // Extract the Arabic month and replace it with English
-  let regex = /(\d{1,2}) (\p{L}+) (\d{4}) - (\d{2}):(\d{2}) (\p{L}+)/u;
-  let match = arabicDateString.match(regex);
-
-  if (!match) {
-    console.error("Invalid date format");
-    return null;
-  }
-
-  let [, day, arabicMonth, year, hours, minutes, meridian] = match;
-
-  // Convert Arabic month to English
-  let month = arabicMonths[arabicMonth as keyof typeof arabicMonths];
-
-  if (!month) {
-    console.error("Unknown Arabic month:", arabicMonth);
-    return null;
-  }
-
-  let monthNum = month - 1;
-  let dayNum = parseInt(day, 10);
-  let yearNum = parseInt(year, 10);
-  let hoursNum = parseInt(hours, 10);
-  let minutesNum = parseInt(minutes, 10);
-  let secondsNum = 0;
-
-  // Convert 12-hour format to 24-hour format
-  if (meridian === "م" && hoursNum !== 12) {
-    hoursNum += 12;
-  } else if (meridian === "ص" && hoursNum === 12) {
-    hoursNum = 0;
-  }
-
-  // Create a new Date object
-  return new Date(
-    Date.UTC(yearNum, monthNum, dayNum, hoursNum, minutesNum, secondsNum),
-  );
-}
-
 export class AkhbarElyom extends PublisherPage {
   private readonly url = "https://akhbarelyom.com";
 
@@ -122,7 +82,7 @@ export class AkhbarElyom extends PublisherPage {
       throw new Error("Published time not found");
     }
 
-    const publishedTimeParsed = convertArabicDateToJSDate(publishedTime);
+    const publishedTimeParsed = AkhbarElyom.convertArabicDateToJSDate(publishedTime);
 
     if (!publishedTimeParsed) {
       throw new Error("Failed to parse published time");
@@ -149,5 +109,45 @@ export class AkhbarElyom extends PublisherPage {
     };
 
     return article;
+  }
+
+  static convertArabicDateToJSDate(arabicDateString: string) {
+    // Extract the Arabic month and replace it with English
+    let regex = /(\d{1,2}) (\p{L}+) (\d{4}) - (\d{2}):(\d{2}) (\p{L}+)/u;
+    let match = arabicDateString.match(regex);
+
+    if (!match) {
+      console.error("Invalid date format");
+      return null;
+    }
+
+    let [, day, arabicMonth, year, hours, minutes, meridian] = match;
+
+    // Convert Arabic month to English
+    let month = arabicMonths[arabicMonth as keyof typeof arabicMonths];
+
+    if (!month) {
+      console.error("Unknown Arabic month:", arabicMonth);
+      return null;
+    }
+
+    let monthNum = month - 1;
+    let dayNum = parseInt(day, 10);
+    let yearNum = parseInt(year, 10);
+    let hoursNum = parseInt(hours, 10);
+    let minutesNum = parseInt(minutes, 10);
+    let secondsNum = 0;
+
+    // Convert 12-hour format to 24-hour format
+    if (meridian === "م" && hoursNum !== 12) {
+      hoursNum += 12;
+    } else if (meridian === "ص" && hoursNum === 12) {
+      hoursNum = 0;
+    }
+
+    // Create a new Date object
+    return new Date(
+      Date.UTC(yearNum, monthNum, dayNum, hoursNum, minutesNum, secondsNum),
+    );
   }
 }

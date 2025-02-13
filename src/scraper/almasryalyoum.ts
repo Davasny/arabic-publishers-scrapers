@@ -1,40 +1,6 @@
 import { Article, PublisherPage, SearchResult } from "./publisherPage";
 import { PageWithCursor } from "puppeteer-real-browser";
 
-/**
- * 12/10/2024 3:29:39 PM -> Date object
- * */
-export function convertStringToDate(dateString: string): Date {
-  const dateTimeRegex =
-    /^(\d{1,2})\/(\d{1,2})\/(\d{4}) (\d{1,2}):(\d{2}):(\d{2}) (AM|PM)$/;
-  const match = dateString.match(dateTimeRegex);
-
-  if (!match) {
-    throw new Error("Invalid date format");
-  }
-
-  let [, month, day, year, hours, minutes, seconds, meridian] = match;
-
-  let monthNum = parseInt(month, 10) - 1;
-  let dayNum = parseInt(day, 10);
-  let yearNum = parseInt(year, 10);
-  let hoursNum = parseInt(hours, 10);
-  let minutesNum = parseInt(minutes, 10);
-  let secondsNum = parseInt(seconds, 10);
-
-  // Convert 12-hour format to 24-hour format
-  if (meridian === "PM" && hoursNum !== 12) {
-    hoursNum += 12;
-  } else if (meridian === "AM" && hoursNum === 12) {
-    hoursNum = 0;
-  }
-
-  // Create a Date object in UTC
-  return new Date(
-    Date.UTC(yearNum, monthNum, dayNum, hoursNum, minutesNum, secondsNum),
-  );
-}
-
 export class AlmasryAlyoum extends PublisherPage {
   private readonly url = "https://www.almasryalyoum.com";
 
@@ -109,7 +75,7 @@ export class AlmasryAlyoum extends PublisherPage {
 
     let publishDate = null;
     if ("datePublished" in jsonLdData) {
-      publishDate = convertStringToDate(jsonLdData.datePublished);
+      publishDate = AlmasryAlyoum.convertStringToDate(jsonLdData.datePublished);
     }
 
     const paragraphs = await this.page.evaluate(() => {
@@ -136,5 +102,39 @@ export class AlmasryAlyoum extends PublisherPage {
       publishDate: publishDate?.toISOString() ?? "",
       author: author,
     };
+  }
+
+  /**
+   * 12/10/2024 3:29:39 PM -> Date object
+   * */
+  static convertStringToDate(dateString: string): Date {
+    const dateTimeRegex =
+      /^(\d{1,2})\/(\d{1,2})\/(\d{4}) (\d{1,2}):(\d{2}):(\d{2}) (AM|PM)$/;
+    const match = dateString.match(dateTimeRegex);
+
+    if (!match) {
+      throw new Error("Invalid date format");
+    }
+
+    let [, month, day, year, hours, minutes, seconds, meridian] = match;
+
+    let monthNum = parseInt(month, 10) - 1;
+    let dayNum = parseInt(day, 10);
+    let yearNum = parseInt(year, 10);
+    let hoursNum = parseInt(hours, 10);
+    let minutesNum = parseInt(minutes, 10);
+    let secondsNum = parseInt(seconds, 10);
+
+    // Convert 12-hour format to 24-hour format
+    if (meridian === "PM" && hoursNum !== 12) {
+      hoursNum += 12;
+    } else if (meridian === "AM" && hoursNum === 12) {
+      hoursNum = 0;
+    }
+
+    // Create a Date object in UTC
+    return new Date(
+      Date.UTC(yearNum, monthNum, dayNum, hoursNum, minutesNum, secondsNum),
+    );
   }
 }

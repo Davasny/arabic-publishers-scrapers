@@ -1,17 +1,17 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { connect, PageWithCursor, ConnectResult } from "puppeteer-real-browser";
-import { AlmasryAlyoum, convertStringToDate } from "./almasryalyoum";
+import { AlmasryAlyoum } from "./almasryalyoum";
 import { GERD } from "../search/i18n";
 import { SearchResult } from "./publisherPage";
 
 describe("Check AlmasryAlyoum helpers", () => {
   it("Checks if date string is parsed correctly PM", () => {
-    const result = convertStringToDate("12/10/2024 3:29:39 PM");
+    const result = AlmasryAlyoum.convertStringToDate("12/10/2024 3:29:39 PM");
     expect(result).toEqual(new Date("2024-12-10T15:29:39.000Z"));
   });
 
   it("Checks if date string is parsed correctly AM", () => {
-    const result = convertStringToDate("5/20/2023 2:17:02 AM");
+    const result = AlmasryAlyoum.convertStringToDate("5/20/2023 2:17:02 AM");
     expect(result).toEqual(new Date("2023-05-20T02:17:02.000Z"));
   });
 });
