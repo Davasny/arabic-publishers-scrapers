@@ -12,28 +12,32 @@ export function convertArabicDateToJSDate(arabicDateString: string) {
     return null;
   }
 
-  let [, day, arabicMonth, year, hours, minutes, period] = match;
+  let [, day, arabicMonth, year, hours, minutes, meridian] = match;
 
   // Convert Arabic month to English
-  let englishMonth = arabicMonths[arabicMonth as keyof typeof arabicMonths];
+  let month = arabicMonths[arabicMonth as keyof typeof arabicMonths];
 
-  if (!englishMonth) {
+  if (!month) {
     console.error("Unknown Arabic month:", arabicMonth);
     return null;
   }
 
+  let monthNum = month - 1;
+  let dayNum = parseInt(day, 10);
+  let yearNum = parseInt(year, 10);
+  let hoursNum = parseInt(hours, 10);
+  let minutesNum = parseInt(minutes, 10);
+  let secondsNum = 0;
+
   // Convert 12-hour format to 24-hour format
-  if (period === "م") {
-    // مساء (PM)
-    hours = `${parseInt(hours, 10) + (hours !== "12" ? 12 : 0)}`;
-  } else if (period === "ص") {
-    // صباحًا (AM)
-    hours = hours === "12" ? "00" : hours;
+  if (meridian === "م" && hoursNum !== 12) {
+    hoursNum += 12;
+  } else if (meridian === "ص" && hoursNum === 12) {
+    hoursNum = 0;
   }
 
   // Create a new Date object
-  let dateString = `${year} ${englishMonth} ${day} ${hours}:${minutes}:00`;
-  return new Date(dateString);
+  return new Date(Date.UTC(yearNum, monthNum, dayNum, hoursNum, minutesNum, secondsNum));
 }
 
 export class AkhbarElyom extends PublisherPage {
@@ -47,12 +51,7 @@ export class AkhbarElyom extends PublisherPage {
     return query.replace(" ", "+");
   }
 
-  async acceptGoogleConsent() {
-    await this.page.waitForNetworkIdle();
-    await this.page.waitForSelector('button[aria-label="Consent"]');
-    await this.page.click('button[aria-label="Consent"]');
-  }
-
+  // todo: implement pagination
   async getSearchResult(query: string): Promise<SearchResult[]> {
     const queryString = this.prepareQuery(query);
     await this.page.goto(
@@ -105,6 +104,8 @@ export class AkhbarElyom extends PublisherPage {
   }
 
   async getArticle(searchResult: SearchResult): Promise<Article> {
+    await this.acceptGoogleConsent();
+
     await this.page.goto(searchResult.url);
 
     const publishedTime = await this.page.evaluate(() => {

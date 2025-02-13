@@ -1,6 +1,6 @@
-import { afterAll, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { AkhbarElyom, convertArabicDateToJSDate } from "./akhbarelyom";
-import { connect } from "puppeteer-real-browser";
+import { connect, ConnectResult, PageWithCursor } from "puppeteer-real-browser";
 import { SearchResult } from "./publisherPage";
 
 describe("Check AkhbarElyom date helper", () => {
@@ -20,10 +20,18 @@ describe("Check AkhbarElyom date helper", () => {
 });
 
 describe("Check AkhbarElyom scraper", async () => {
-  const { page, browser } = await connect({
-    headless: false,
-    turnstile: true,
-  });
+  let page: PageWithCursor;
+  let browser: ConnectResult["browser"];
+
+  beforeAll(async () => {
+    const result = await connect({
+      headless: false,
+      turnstile: true,
+    });
+
+    page = result.page;
+    browser = result.browser;
+  }, 30_000);
 
   afterAll(async () => {
     await browser.close();
@@ -39,8 +47,8 @@ describe("Check AkhbarElyom scraper", async () => {
 
     const article = await ae.getArticle(searchResult);
 
-    expect(article.publishDate).toEqual("2022-09-12T16:09:00.000Z");
+    expect(article.publishDate).toEqual("2022-09-12T18:09:00.000Z");
     expect(article.author).toEqual("محمد بركات");
     expect(article.paragraphs.length).toEqual(7);
-  });
+  }, 30_000);
 });
