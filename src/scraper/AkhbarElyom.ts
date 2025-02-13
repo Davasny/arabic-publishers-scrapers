@@ -103,15 +103,28 @@ export class AkhbarElyom extends PublisherPage {
 
   async getSearchResult(query: string): Promise<SearchResult[]> {
     const firstResult = await this.getFirstResult(query);
-    const results = await this.getSearchPage(
-      query,
-      firstResult.publisherArticleId,
-    );
+    const allResults: SearchResult[] = [firstResult];
 
-    // todo: iterate over pages
-    // todo: find a way to decide about stopping the iteration
+    while (true) {
+      const lastId = allResults[allResults.length - 1].publisherArticleId;
 
-    return [firstResult, ...results];
+      const newResults = await this.getSearchPage(query, lastId);
+
+      if (newResults.length === 0) {
+        break;
+      }
+
+      // break if results last id is the same as last id in all results
+      const lastNewId = newResults[newResults.length - 1].publisherArticleId;
+
+      if (lastNewId === lastId) {
+        break;
+      }
+
+      allResults.push(...newResults);
+    }
+
+    return allResults;
   }
 
   async getArticle(searchResult: SearchResult): Promise<Article> {

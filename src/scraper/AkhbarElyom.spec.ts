@@ -72,7 +72,7 @@ describe("Check AkhbarElyom scraper", async () => {
     const secondResult = results[1];
 
     expect(firstResult.title).not.toEqual(secondResult.title);
-  });
+  }, 30_000);
 
   it("Checks if article is parsed correctly", async () => {
     const ae = new AkhbarElyom(page);
