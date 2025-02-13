@@ -1,14 +1,9 @@
-import { connect } from "puppeteer-real-browser";
 import { GERD } from "./search/i18n";
 import { AkhbarElyom } from "./scraper/akhbarelyom";
+import { getBrowser } from "./scraper/BrowserFactory";
 
 const main = async () => {
-  const { page } = await connect({
-    headless: false,
-    turnstile: true,
-  });
-
-  await page.setViewport({ width: 1024, height: 1024 });
+  const { page } = await getBrowser({});
 
   const ae = new AkhbarElyom(page);
   const results = await ae.getSearchResult(GERD.fullNameArabic);

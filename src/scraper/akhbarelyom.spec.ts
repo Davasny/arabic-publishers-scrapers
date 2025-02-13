@@ -2,6 +2,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { AkhbarElyom } from "./akhbarelyom";
 import { connect, ConnectResult, PageWithCursor } from "puppeteer-real-browser";
 import { SearchResult } from "./publisherPage";
+import { getBrowser } from "./BrowserFactory";
 
 describe("Check AkhbarElyom date helper", () => {
   it("Should return valid date for for PM", () => {
@@ -24,10 +25,7 @@ describe("Check AkhbarElyom scraper", async () => {
   let browser: ConnectResult["browser"];
 
   beforeAll(async () => {
-    const result = await connect({
-      headless: false,
-      turnstile: true,
-    });
+    const result = await getBrowser({});
 
     page = result.page;
     browser = result.browser;

@@ -3,6 +3,7 @@ import { connect, PageWithCursor, ConnectResult } from "puppeteer-real-browser";
 import { AlmasryAlyoum } from "./almasryalyoum";
 import { GERD } from "../search/i18n";
 import { SearchResult } from "./publisherPage";
+import { getBrowser } from "./BrowserFactory";
 
 describe("Check AlmasryAlyoum helpers", () => {
   it("Checks if date string is parsed correctly PM", () => {
@@ -21,14 +22,10 @@ describe("Check AlmasryAlyoum scraper", async () => {
   let browser: ConnectResult["browser"];
 
   beforeAll(async () => {
-    const result = await connect({
-      headless: false,
-      turnstile: true,
-    });
+    const result = await getBrowser({});
 
     page = result.page;
     browser = result.browser;
-    await page.setViewport({ width: 1024, height: 1024 });
   }, 30_000);
 
   afterAll(async () => {
