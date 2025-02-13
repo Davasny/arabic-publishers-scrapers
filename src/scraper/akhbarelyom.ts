@@ -37,7 +37,9 @@ export function convertArabicDateToJSDate(arabicDateString: string) {
   }
 
   // Create a new Date object
-  return new Date(Date.UTC(yearNum, monthNum, dayNum, hoursNum, minutesNum, secondsNum));
+  return new Date(
+    Date.UTC(yearNum, monthNum, dayNum, hoursNum, minutesNum, secondsNum),
+  );
 }
 
 export class AkhbarElyom extends PublisherPage {

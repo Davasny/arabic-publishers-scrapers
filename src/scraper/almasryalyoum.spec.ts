@@ -6,15 +6,15 @@ import { SearchResult } from "./publisherPage";
 
 describe("Check AlmasryAlyoum helpers", () => {
   it("Checks if date string is parsed correctly PM", () => {
-    const result = convertStringToDate("12/10/2024 3:29:39 PM")
-    expect(result).toEqual(new Date("2024-12-10T15:29:39.000Z"))
-  })
+    const result = convertStringToDate("12/10/2024 3:29:39 PM");
+    expect(result).toEqual(new Date("2024-12-10T15:29:39.000Z"));
+  });
 
   it("Checks if date string is parsed correctly AM", () => {
-    const result = convertStringToDate("5/20/2023 2:17:02 AM")
-    expect(result).toEqual(new Date("2023-05-20T02:17:02.000Z"))
-  })
-})
+    const result = convertStringToDate("5/20/2023 2:17:02 AM");
+    expect(result).toEqual(new Date("2023-05-20T02:17:02.000Z"));
+  });
+});
 
 describe("Check AlmasryAlyoum scraper", async () => {
   let page: PageWithCursor;
@@ -54,8 +54,8 @@ describe("Check AlmasryAlyoum scraper", async () => {
 
     const article = await aa.getArticle(searchResult);
 
-    expect(article.author).toBe("بسام رمضان")
+    expect(article.author).toBe("بسام رمضان");
     expect(article.paragraphs.length).toBe(9);
-    expect(article.publishDate).toBe("2024-12-10T15:29:39.000Z")
+    expect(article.publishDate).toBe("2024-12-10T15:29:39.000Z");
   }, 30_000);
 });

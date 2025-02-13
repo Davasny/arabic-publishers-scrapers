@@ -14,8 +14,7 @@ export interface Article {
 }
 
 export abstract class PublisherPage {
-  constructor(readonly page: PageWithCursor) {
-  }
+  constructor(readonly page: PageWithCursor) {}
 
   abstract getSearchResult(query: string): Promise<SearchResult[]>;
 
@@ -24,13 +23,15 @@ export abstract class PublisherPage {
   async acceptGoogleConsent() {
     const possibleSelectors = [
       'button[aria-label="Consent"]',
-      'button.fc-button-label',
-    ]
+      "button.fc-button-label",
+    ];
 
     for (const selector of possibleSelectors) {
-      console.log(`Checking consent button for: ${selector}`)
+      console.log(`Checking consent button for: ${selector}`);
       try {
-        let consentButton = await this.page.waitForSelector(selector, {timeout: 2_000});
+        let consentButton = await this.page.waitForSelector(selector, {
+          timeout: 2_000,
+        });
 
         // If the button is found, click it.
         if (consentButton) {

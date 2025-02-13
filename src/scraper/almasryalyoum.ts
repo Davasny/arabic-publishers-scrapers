@@ -5,7 +5,8 @@ import { PageWithCursor } from "puppeteer-real-browser";
  * 12/10/2024 3:29:39 PM -> Date object
  * */
 export function convertStringToDate(dateString: string): Date {
-  const dateTimeRegex = /^(\d{1,2})\/(\d{1,2})\/(\d{4}) (\d{1,2}):(\d{2}):(\d{2}) (AM|PM)$/;
+  const dateTimeRegex =
+    /^(\d{1,2})\/(\d{1,2})\/(\d{4}) (\d{1,2}):(\d{2}):(\d{2}) (AM|PM)$/;
   const match = dateString.match(dateTimeRegex);
 
   if (!match) {
@@ -29,7 +30,9 @@ export function convertStringToDate(dateString: string): Date {
   }
 
   // Create a Date object in UTC
-  return new Date(Date.UTC(yearNum, monthNum, dayNum, hoursNum, minutesNum, secondsNum));
+  return new Date(
+    Date.UTC(yearNum, monthNum, dayNum, hoursNum, minutesNum, secondsNum),
+  );
 }
 
 export class AlmasryAlyoum extends PublisherPage {
@@ -110,15 +113,21 @@ export class AlmasryAlyoum extends PublisherPage {
     }
 
     const paragraphs = await this.page.evaluate(() => {
-      const newsStory = document.querySelector('#NewsStory');
+      const newsStory = document.querySelector("#NewsStory");
       if (!newsStory) return [];
 
-      return Array.from(newsStory.querySelectorAll('p'))
-        .filter(p => p.textContent?.trim() !== '' && !p.classList.contains('min_related'))
-        // there is a lot of paragraphs in article but only article content has textAlign as inline style
-        // otherwise paragraph with some video loading error is considered as valid paragraph
-        .filter(p => p.style.textAlign === "justify")
-        .map(p => p.textContent?.trim());
+      return (
+        Array.from(newsStory.querySelectorAll("p"))
+          .filter(
+            (p) =>
+              p.textContent?.trim() !== "" &&
+              !p.classList.contains("min_related"),
+          )
+          // there is a lot of paragraphs in article but only article content has textAlign as inline style
+          // otherwise paragraph with some video loading error is considered as valid paragraph
+          .filter((p) => p.style.textAlign === "justify")
+          .map((p) => p.textContent?.trim())
+      );
     });
 
     return {
