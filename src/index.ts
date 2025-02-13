@@ -1,5 +1,5 @@
 import { GERD } from "./search/i18n";
-import { AkhbarElyom } from "./scraper/akhbarelyom";
+import { AkhbarElyom } from "./scraper/AkhbarElyom";
 import { getBrowser } from "./scraper/BrowserFactory";
 
 const main = async () => {

@@ -1,6 +1,6 @@
 import { PageWithCursor } from "puppeteer-real-browser";
-import { Article, PublisherPage, SearchResult } from "./publisherPage";
-import { arabicMonths } from "../search/consts";
+import { Article, PublisherPage, SearchResult } from "./PublisherPage";
+import { arabicMonths } from "@/search/consts";
 
 export class AkhbarElyom extends PublisherPage {
   private readonly url = "https://akhbarelyom.com";
@@ -82,7 +82,8 @@ export class AkhbarElyom extends PublisherPage {
       throw new Error("Published time not found");
     }
 
-    const publishedTimeParsed = AkhbarElyom.convertArabicDateToJSDate(publishedTime);
+    const publishedTimeParsed =
+      AkhbarElyom.convertArabicDateToJSDate(publishedTime);
 
     if (!publishedTimeParsed) {
       throw new Error("Failed to parse published time");

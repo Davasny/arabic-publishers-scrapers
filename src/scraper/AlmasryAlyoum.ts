@@ -1,4 +1,4 @@
-import { Article, PublisherPage, SearchResult } from "./publisherPage";
+import { Article, PublisherPage, SearchResult } from "./PublisherPage";
 import { PageWithCursor } from "puppeteer-real-browser";
 
 export class AlmasryAlyoum extends PublisherPage {

@@ -1,8 +1,8 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { connect, PageWithCursor, ConnectResult } from "puppeteer-real-browser";
-import { AlmasryAlyoum } from "./almasryalyoum";
-import { GERD } from "../search/i18n";
-import { SearchResult } from "./publisherPage";
+import { PageWithCursor, ConnectResult } from "puppeteer-real-browser";
+import { AlmasryAlyoum } from "./AlmasryAlyoum";
+import { GERD } from "@/search/i18n";
+import { SearchResult } from "./PublisherPage";
 import { getBrowser } from "./BrowserFactory";
 
 describe("Check AlmasryAlyoum helpers", () => {

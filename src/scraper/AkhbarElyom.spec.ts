@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { AkhbarElyom } from "./akhbarelyom";
-import { connect, ConnectResult, PageWithCursor } from "puppeteer-real-browser";
-import { SearchResult } from "./publisherPage";
+import { AkhbarElyom } from "./AkhbarElyom";
+import { ConnectResult, PageWithCursor } from "puppeteer-real-browser";
+import { SearchResult } from "./PublisherPage";
 import { getBrowser } from "./BrowserFactory";
 
 describe("Check AkhbarElyom date helper", () => {
