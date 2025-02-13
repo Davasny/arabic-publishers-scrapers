@@ -10,9 +10,11 @@ export interface SearchResult {
 
 export interface Article {
   url: string;
+  // todo: implement title in AkhbarElyom and AlmasryAlyoum
+  title?: string;
   paragraphs: string[];
   publishDate: string;
-  author: string;
+  author: string | null;
 }
 
 export abstract class PublisherPage {
@@ -28,6 +30,13 @@ export abstract class PublisherPage {
       waitUntil: "domcontentloaded",
     });
 
+    // some pages have a lot of pending requests, there is no need to wait for them
+    try {
+      await this.page.waitForNetworkIdle({ timeout: 5_000 });
+    } catch (e) {
+      console.log("Network wasn't idle for more than 5s");
+    }
+
     if (!options?.skipConsent) {
       await this.acceptGoogleConsent();
     }
@@ -36,6 +45,18 @@ export abstract class PublisherPage {
   }
 
   private async acceptGoogleConsent() {
+    const cookies = await this.page.cookies();
+    // FCCDCF is Google Consent cookie name
+    const googleConsentCookie = cookies.find(
+      (cookie) => cookie.name === "FCCDCF",
+    );
+
+    if (googleConsentCookie) {
+      console.log("Consent already.");
+      // If the cookie is found, assume consent is already given.
+      return;
+    }
+
     const possibleSelectors = [
       'button[aria-label="Consent"]',
       "button.fc-button-label",

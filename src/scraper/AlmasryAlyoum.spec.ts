@@ -26,18 +26,18 @@ describe("Check AlmasryAlyoum scraper", async () => {
 
     page = result.page;
     browser = result.browser;
-  }, 30_000);
+  });
 
   afterAll(async () => {
     await browser.close();
-  }, 30_000);
+  });
 
   it("Checks if search page is parsed correctly", async () => {
     const aa = new AlmasryAlyoum(page);
     const searchResults = await aa.getSearchResult(GERD.fullNameArabic);
 
     expect(searchResults.length).toBe(12);
-  }, 30_000);
+  });
 
   it("Checks if article page is parsed correctly", async () => {
     const aa = new AlmasryAlyoum(page);
@@ -55,5 +55,5 @@ describe("Check AlmasryAlyoum scraper", async () => {
     expect(article.author).toBe("بسام رمضان");
     expect(article.paragraphs.length).toBe(9);
     expect(article.publishDate).toBe("2024-12-10T15:29:39.000Z");
-  }, 30_000);
+  });
 });

@@ -30,11 +30,11 @@ describe("Check AkhbarElyom scraper", async () => {
 
     page = result.page;
     browser = result.browser;
-  }, 30_000);
+  });
 
   afterAll(async () => {
     await browser.close();
-  }, 30_000);
+  });
 
   it("Checks if first search result is returned", async () => {
     const ae = new AkhbarElyom(page);
@@ -72,7 +72,7 @@ describe("Check AkhbarElyom scraper", async () => {
     const secondResult = results[1];
 
     expect(firstResult.title).not.toEqual(secondResult.title);
-  }, 30_000);
+  });
 
   it("Checks if article is parsed correctly", async () => {
     const ae = new AkhbarElyom(page);
@@ -88,5 +88,5 @@ describe("Check AkhbarElyom scraper", async () => {
     expect(article.publishDate).toEqual("2022-09-12T18:09:00.000Z");
     expect(article.author).toEqual("محمد بركات");
     expect(article.paragraphs.length).toEqual(7);
-  }, 30_000);
+  });
 });
