@@ -3,6 +3,7 @@ import { AkhbarElyom } from "./AkhbarElyom";
 import { ConnectResult, PageWithCursor } from "puppeteer-real-browser";
 import { SearchResult } from "./PublisherPage";
 import { getBrowser } from "./BrowserFactory";
+import { GERD } from "@/search/i18n";
 
 describe("Check AkhbarElyom date helper", () => {
   it("Should return valid date for for PM", () => {
@@ -35,12 +36,51 @@ describe("Check AkhbarElyom scraper", async () => {
     await browser.close();
   }, 30_000);
 
+  it("Checks if first search result is returned", async () => {
+    const ae = new AkhbarElyom(page);
+    const result = await ae.getFirstResult(GERD.fullNameArabic);
+
+    expect(result.title).toBeDefined();
+    expect(result.url).toBeDefined();
+  });
+
+  it("Checks if search pagination endpoint returns proper results", async () => {
+    const ae = new AkhbarElyom(page);
+
+    const firstSearchResult: SearchResult = {
+      url: "https://akhbarelyom.com/news/newdetails/4020261/1/8-%D8%AA%D8%AD%D8%AF%D9%8A%D8%A7%D8%AA-%D8%A3%D9%85%D8%A7%D9%85-%D8%A7%D9%84%D8%B1%D8%A6%D8%A7%D8%B3%D8%A9-%D8%A7%D9%84%D8%AC%D8%AF%D9%8A%D8%AF%D8%A9-%D9%84%D9%84%D8%A7%D8%AA%D8%AD%D8%A7%D8%AF-%D8%A7%D9%84",
+      title: "8 تحديات أمام الرئاسة الجديدة للاتحاد الإفريقى",
+      imagePath:
+        "https://images.akhbarelyom.com/images/images/medium/20230217182616529.jpg",
+      publisherArticleId: "4020261",
+    };
+
+    const result = await ae.getSearchPage(
+      GERD.fullNameArabic,
+      firstSearchResult.publisherArticleId,
+    );
+
+    expect(result.length).toBe(6);
+  });
+
+  it("Checks if getSearchResult returns valid non-duplicated results", async () => {
+    const ae = new AkhbarElyom(page);
+    const results = await ae.getSearchResult(GERD.fullNameArabic);
+
+    expect(results.length).toBeGreaterThan(1);
+    const firstResult = results[0];
+    const secondResult = results[1];
+
+    expect(firstResult.title).not.toEqual(secondResult.title);
+  });
+
   it("Checks if article is parsed correctly", async () => {
     const ae = new AkhbarElyom(page);
     const searchResult: SearchResult = {
       url: "https://akhbarelyom.com/news/newdetails/3878112/1/محمد-بركات-يكتب-السد-الإثيوبى",
       title: "محمد بركات يكتب: السد الإثيوبى",
       imagePath: null,
+      publisherArticleId: null,
     };
 
     const article = await ae.getArticle(searchResult);

@@ -43,6 +43,8 @@ export class AlmasryAlyoum extends PublisherPage {
           url,
           title,
           imagePath,
+          // todo: check if AlmasryAlyoum has some way to extract id
+          publisherArticleId: null,
         };
 
         return searchResult;

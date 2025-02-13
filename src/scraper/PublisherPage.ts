@@ -5,6 +5,7 @@ export interface SearchResult {
   url: string;
   title: string;
   imagePath: string | null;
+  publisherArticleId: string | null;
 }
 
 export interface Article {
@@ -21,12 +22,16 @@ export abstract class PublisherPage {
 
   abstract getArticle(searchResult: SearchResult): Promise<Article>;
 
-  async goto(url: string, options?: GoToOptions) {
+  async goto(url: string, options?: GoToOptions & { skipConsent?: boolean }) {
     const result = await this.page.goto(url, {
       ...options,
       waitUntil: "domcontentloaded",
     });
-    await this.acceptGoogleConsent();
+
+    if (!options?.skipConsent) {
+      await this.acceptGoogleConsent();
+    }
+
     return result;
   }
 

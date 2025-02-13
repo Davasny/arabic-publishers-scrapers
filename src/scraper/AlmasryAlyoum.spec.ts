@@ -47,6 +47,7 @@ describe("Check AlmasryAlyoum scraper", async () => {
         "https://mediaaws.almasryalyoum.com/news/small/2024/09/01/2475851_0.jpg",
       title: "هل بدأت إثيوبيا بتفريغ سد النهضة؟.. عباس شراقي يوضح",
       url: "https://www.almasryalyoum.com/news/details/3326339",
+      publisherArticleId: null,
     };
 
     const article = await aa.getArticle(searchResult);

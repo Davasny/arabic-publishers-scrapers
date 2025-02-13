@@ -13,29 +13,64 @@ export class AkhbarElyom extends PublisherPage {
     return query.replace(" ", "+");
   }
 
-  // todo: implement pagination
-  async getSearchResult(query: string): Promise<SearchResult[]> {
+  /**
+   * Extracts id from /news/newdetails/4020261/1/8-تحديات-أمام-الرئاسة-الجديدة-للاتحاد-ال
+   * */
+  private getIdFromNewsUrl(url: string): string | null {
+    // This regex looks for a pattern like "/news/newdetails/{id}/"
+    const regex = /\/news\/newdetails\/(\d+)(\/|$)/;
+    const match = url.match(regex);
+    return match ? match[1] : null;
+  }
+
+  async getFirstResult(query: string): Promise<SearchResult> {
     const queryString = this.prepareQuery(query);
     await this.goto(
       `${this.url}/News/Search/1?JournalID=1&query=${queryString}`,
     );
 
-    await this.acceptGoogleConsent();
+    const firstSearchResult = await this.page.$(".entry-block-full");
 
-    // scroll to bottom
-    await this.page.evaluate(() => {
-      window.scrollTo(0, document.body.scrollHeight);
-    });
+    const titleElement = await firstSearchResult?.$("h3 a");
+    const link = await titleElement?.evaluate((el) => el.href);
+    const titleText = await titleElement?.evaluate((el) =>
+      el.textContent?.trim(),
+    );
 
-    // load more results
-    await this.page.waitForSelector('.more-btn input[type="submit"]');
-    await this.page.click('.more-btn input[type="submit"]');
-    await this.page.waitForNetworkIdle();
+    if (!link) {
+      throw new Error("Title link not found");
+    }
 
-    // scroll to bottom
-    await this.page.evaluate(() => {
-      window.scrollTo(0, document.body.scrollHeight);
-    });
+    if (!titleText) {
+      throw new Error("Title text not found");
+    }
+
+    const image = await firstSearchResult?.$("img");
+    const imageSrc = await image?.evaluate((i) => i.src);
+
+    const publisherId = this.getIdFromNewsUrl(link);
+
+    const firstItem: SearchResult = {
+      url: link,
+      title: titleText,
+      imagePath: imageSrc || null,
+      publisherArticleId: publisherId || null,
+    };
+
+    return firstItem;
+  }
+
+  async getSearchPage(
+    query: string,
+    lastKnownArticleId: SearchResult["publisherArticleId"],
+  ): Promise<SearchResult[]> {
+    const queryString = this.prepareQuery(query);
+
+    // url found by clicking "load more" in search results
+    await this.goto(
+      `${this.url}/News/SearchPaging?JournalID=1&LastID=${lastKnownArticleId}&query=${queryString}&_=1739446961500`,
+      { skipConsent: true }, // this endpoint doesn't load anything more than just simple html
+    );
 
     const articleBlocks = await this.page.$$(".entry-block-small");
 
@@ -56,6 +91,7 @@ export class AkhbarElyom extends PublisherPage {
           url: href,
           title: title,
           imagePath: imageSrc || null,
+          publisherArticleId: this.getIdFromNewsUrl(href),
         };
 
         return article;
@@ -63,6 +99,19 @@ export class AkhbarElyom extends PublisherPage {
     );
 
     return linkData.filter((link) => link !== null);
+  }
+
+  async getSearchResult(query: string): Promise<SearchResult[]> {
+    const firstResult = await this.getFirstResult(query);
+    const results = await this.getSearchPage(
+      query,
+      firstResult.publisherArticleId,
+    );
+
+    // todo: iterate over pages
+    // todo: find a way to decide about stopping the iteration
+
+    return [firstResult, ...results];
   }
 
   async getArticle(searchResult: SearchResult): Promise<Article> {

@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "download": "tsx src/search/index.ts",
     "scraper": "tsx src/index.ts",
@@ -22,6 +23,7 @@
     "rebrowser-puppeteer-core": "23.10.3",
     "tsx": "4.19.2",
     "typescript": "5.7.3",
+    "vite-tsconfig-paths": "5.1.4",
     "vitest": "3.0.5",
     "wretch": "2.11.0"
   },
