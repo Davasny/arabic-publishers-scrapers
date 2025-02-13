@@ -12,11 +12,10 @@ export class AlmasryAlyoum extends PublisherPage {
     query: string,
     pageNumber = 1,
   ): Promise<SearchResult[]> {
-    await this.page.goto(
+    await this.goto(
       `${this.url}/news/index?srchall=True&typeid=1&page=${pageNumber}&keyword=${query}`,
       { waitUntil: "domcontentloaded" },
     );
-    await this.acceptGoogleConsent();
 
     const newsElements = await this.page.$$(".town_wrap .news");
 
@@ -54,8 +53,7 @@ export class AlmasryAlyoum extends PublisherPage {
   }
 
   async getArticle(searchResult: SearchResult): Promise<Article> {
-    await this.page.goto(searchResult.url, { waitUntil: "domcontentloaded" });
-    await this.acceptGoogleConsent();
+    await this.goto(searchResult.url, { waitUntil: "domcontentloaded" });
 
     const jsonLdData = await this.page.evaluate(() => {
       const scriptTag = document.querySelector(

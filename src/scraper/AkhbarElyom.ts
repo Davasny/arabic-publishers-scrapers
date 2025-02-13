@@ -16,7 +16,7 @@ export class AkhbarElyom extends PublisherPage {
   // todo: implement pagination
   async getSearchResult(query: string): Promise<SearchResult[]> {
     const queryString = this.prepareQuery(query);
-    await this.page.goto(
+    await this.goto(
       `${this.url}/News/Search/1?JournalID=1&query=${queryString}`,
     );
 
@@ -66,9 +66,7 @@ export class AkhbarElyom extends PublisherPage {
   }
 
   async getArticle(searchResult: SearchResult): Promise<Article> {
-    await this.acceptGoogleConsent();
-
-    await this.page.goto(searchResult.url);
+    await this.goto(searchResult.url);
 
     const publishedTime = await this.page.evaluate(() => {
       const metaTag = document.querySelector(

@@ -1,4 +1,5 @@
 import { PageWithCursor } from "puppeteer-real-browser";
+import { GoToOptions } from "rebrowser-puppeteer-core";
 
 export interface SearchResult {
   url: string;
@@ -20,7 +21,16 @@ export abstract class PublisherPage {
 
   abstract getArticle(searchResult: SearchResult): Promise<Article>;
 
-  async acceptGoogleConsent() {
+  async goto(url: string, options?: GoToOptions) {
+    const result = await this.page.goto(url, {
+      ...options,
+      waitUntil: "domcontentloaded",
+    });
+    await this.acceptGoogleConsent();
+    return result;
+  }
+
+  private async acceptGoogleConsent() {
     const possibleSelectors = [
       'button[aria-label="Consent"]',
       "button.fc-button-label",

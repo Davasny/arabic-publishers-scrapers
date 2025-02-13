@@ -26,6 +26,9 @@ importers:
       puppeteer-real-browser:
         specifier: 1.4.0
         version: 1.4.0
+      rebrowser-puppeteer-core:
+        specifier: 23.10.3
+        version: 23.10.3
       tsx:
         specifier: 4.19.2
         version: 4.19.2
