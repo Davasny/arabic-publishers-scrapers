@@ -1,6 +1,6 @@
 import { GERD } from "./search/i18n";
-import { AkhbarElyom } from "./scraper/AkhbarElyom";
-import { getBrowser } from "./scraper/BrowserFactory";
+import { AkhbarElyom } from "@/clients/AkhbarElyom";
+import { getBrowser } from "@/clients/BrowserFactory";
 
 const main = async () => {
   const { page } = await getBrowser({});

@@ -1,4 +1,4 @@
-import { Article, PublisherPage, SearchResult } from "@/scraper/PublisherPage";
+import { Article, PublisherPage, SearchResult } from "@/clients/PublisherPage";
 import { PageWithCursor } from "puppeteer-real-browser";
 
 export class Dostor extends PublisherPage {

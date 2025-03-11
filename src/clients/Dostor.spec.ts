@@ -1,8 +1,8 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { ConnectResult, PageWithCursor } from "puppeteer-real-browser";
-import { getBrowser } from "@/scraper/BrowserFactory";
-import { Dostor } from "@/scraper/Dostor";
-import { SearchResult } from "@/scraper/PublisherPage";
+import { getBrowser } from "@/clients/BrowserFactory";
+import { Dostor } from "@/clients/Dostor";
+import { SearchResult } from "@/clients/PublisherPage";
 
 describe("Check dostor helpers", () => {
   it("Checks date conversion PM", () => {
