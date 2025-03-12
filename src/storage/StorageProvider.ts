@@ -42,6 +42,7 @@ export class StorageProvider {
 
     return result[0];
   }
+
   async getNewestSearchResult(
     publisherName: string,
   ): Promise<SearchResultSelect | null> {
@@ -77,6 +78,7 @@ export class StorageProvider {
         and(
           eq(searchResultsTable.publisherName, publisherName),
           isNull(articlesTable.id),
+          isNull(searchResultsTable.lastScrapeTimestamp),
         ),
       )
       .orderBy(asc(searchResultsTable.id));
@@ -86,5 +88,12 @@ export class StorageProvider {
     }
 
     return results.map((result) => result.search_results);
+  }
+
+  async updateSearchResultTimestamp(searchResultId: number): Promise<void> {
+    await this.db
+      .update(searchResultsTable)
+      .set({ lastScrapeTimestamp: Date.now() })
+      .where(eq(searchResultsTable.id, searchResultId));
   }
 }

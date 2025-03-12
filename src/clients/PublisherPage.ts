@@ -20,11 +20,18 @@ export interface Article {
 export abstract class PublisherPage {
   typicalNetworkTimeout = 5_000;
 
-  protected constructor(readonly page: PageWithCursor) {}
+  protected constructor(
+    readonly page: PageWithCursor,
+    typicalNetworkTimeout?: number,
+  ) {
+    if (typicalNetworkTimeout) {
+      this.typicalNetworkTimeout = typicalNetworkTimeout;
+    }
+  }
 
   abstract getSearchResult(query: string): Promise<SearchResult[]>;
 
-  abstract getArticle(searchResult: SearchResult): Promise<Article>;
+  abstract getArticle(searchResult: SearchResult): Promise<Article | null>;
 
   async goto(url: string, options?: GoToOptions & { skipConsent?: boolean }) {
     const result = await this.page.goto(url, {

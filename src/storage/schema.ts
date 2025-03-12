@@ -10,6 +10,7 @@ export const searchResultsTable = sqliteTable(
     title: t.text(),
     imagePath: t.text(),
     publisherArticleId: t.integer(),
+    lastScrapeTimestamp: t.integer(),
   },
   (t) => [unique().on(t.publisherName, t.publisherArticleId)],
 );

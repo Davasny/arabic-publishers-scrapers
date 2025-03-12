@@ -5,7 +5,7 @@ export class AlmasryAlyoumClient extends PublisherPage {
   private readonly url = "https://www.almasryalyoum.com";
 
   constructor(page: PageWithCursor) {
-    super(page);
+    super(page, 2_000);
   }
 
   async getSearchResult(
@@ -43,8 +43,7 @@ export class AlmasryAlyoumClient extends PublisherPage {
           url,
           title,
           imagePath,
-          // todo: check if AlmasryAlyoumClient has some way to extract id
-          publisherArticleId: null,
+          publisherArticleId: AlmasryAlyoumClient.extractIdFromUrl(url),
         };
 
         return searchResult;
@@ -54,7 +53,7 @@ export class AlmasryAlyoumClient extends PublisherPage {
     return newsData.filter((news) => news !== null);
   }
 
-  async getArticle(searchResult: SearchResult): Promise<Article> {
+  async getArticle(searchResult: SearchResult): Promise<Article | null> {
     await this.goto(searchResult.url, { waitUntil: "domcontentloaded" });
 
     const jsonLdData = await this.page.evaluate(() => {
@@ -69,33 +68,34 @@ export class AlmasryAlyoumClient extends PublisherPage {
     });
 
     let author = null;
-    if ("author" in jsonLdData && "name" in jsonLdData.author) {
+    if (jsonLdData && "author" in jsonLdData && "name" in jsonLdData.author) {
       author = jsonLdData.author.name;
     }
 
     let publishDate = null;
-    if ("datePublished" in jsonLdData) {
+    if (jsonLdData && "datePublished" in jsonLdData) {
       publishDate = AlmasryAlyoumClient.convertStringToDate(
         jsonLdData.datePublished,
       );
+    }
+
+    if (!publishDate) {
+      return null;
     }
 
     const paragraphs = await this.page.evaluate(() => {
       const newsStory = document.querySelector("#NewsStory");
       if (!newsStory) return [];
 
-      return (
-        Array.from(newsStory.querySelectorAll("p"))
-          .filter(
-            (p) =>
-              p.textContent?.trim() !== "" &&
-              !p.classList.contains("min_related"),
-          )
-          // there is a lot of paragraphs in article but only article content has textAlign as inline style
-          // otherwise paragraph with some video loading error is considered as valid paragraph
-          .filter((p) => p.style.textAlign === "justify")
-          .map((p) => p.textContent?.trim())
-      );
+      const paragraphsWithoutIframe = Array.from(
+        newsStory.querySelectorAll(":scope > p"),
+      )
+        .filter((p) => p.querySelectorAll("iframe").length === 0)
+        .filter((p) => !p.classList.contains("min_related"))
+        .filter((p) => p.textContent?.trim() !== "")
+        .map((p) => p.textContent?.trim());
+
+      return paragraphsWithoutIframe;
     });
 
     return {
@@ -138,5 +138,10 @@ export class AlmasryAlyoumClient extends PublisherPage {
     return new Date(
       Date.UTC(yearNum, monthNum, dayNum, hoursNum, minutesNum, secondsNum),
     );
+  }
+
+  static extractIdFromUrl(url: string): string | null {
+    const match = url.match(/\/(\d+)(?:#|$)/);
+    return match ? match[1] : null;
   }
 }
