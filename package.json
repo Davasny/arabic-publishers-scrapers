@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "download": "tsx src/search/index.ts",
-    "scraper": "tsx src/index.ts",
+    "scraper:AkhbarElyom": "tsx src/cli/AkhbarElyomScraper.ts",
+    "dumpArticles": "tsx src/cli/dumpArticles.ts",
     "prepare": "husky",
     "fmt:staged": "lint-staged"
   },
@@ -14,8 +15,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@libsql/client": "0.14.0",
     "@types/node": "22.10.10",
     "dotenv": "16.4.7",
+    "drizzle-kit": "0.30.5",
+    "drizzle-orm": "0.40.0",
     "husky": "9.1.7",
     "lint-staged": "15.4.3",
     "prettier": "3.4.2",

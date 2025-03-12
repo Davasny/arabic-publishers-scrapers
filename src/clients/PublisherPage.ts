@@ -18,7 +18,7 @@ export interface Article {
 }
 
 export abstract class PublisherPage {
-  constructor(readonly page: PageWithCursor) {}
+  protected constructor(readonly page: PageWithCursor) {}
 
   abstract getSearchResult(query: string): Promise<SearchResult[]>;
 
@@ -32,7 +32,7 @@ export abstract class PublisherPage {
 
     // some pages have a lot of pending requests, there is no need to wait for them
     try {
-      await this.page.waitForNetworkIdle({ timeout: 5_000 });
+      await this.page.waitForNetworkIdle({ timeout: 1_000 });
     } catch (e) {
       console.log("Network wasn't idle for more than 5s");
     }
