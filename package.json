@@ -7,6 +7,7 @@
   "scripts": {
     "download": "tsx src/search/index.ts",
     "scraper:AkhbarElyom": "tsx src/cli/AkhbarElyomScraper.ts",
+    "scraper:Dostor": "tsx src/cli/DostorScraper.ts",
     "dumpArticles": "tsx src/cli/dumpArticles.ts",
     "prepare": "husky",
     "fmt:staged": "lint-staged"

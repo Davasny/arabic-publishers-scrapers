@@ -18,10 +18,9 @@ export interface Article {
 }
 
 export abstract class PublisherPage {
-  protected constructor(
-    readonly page: PageWithCursor,
-    readonly typicalNetworkTimeout = 5_000,
-  ) {}
+  typicalNetworkTimeout = 5_000;
+
+  protected constructor(readonly page: PageWithCursor) {}
 
   abstract getSearchResult(query: string): Promise<SearchResult[]>;
 
@@ -40,7 +39,7 @@ export abstract class PublisherPage {
       });
     } catch (e) {
       console.log(
-        `Network wasn't idle for more than ${this.typicalNetworkTimeout / 5000}s`,
+        `Network wasn't idle for more than ${this.typicalNetworkTimeout / 1000}s`,
       );
     }
 
@@ -59,10 +58,11 @@ export abstract class PublisherPage {
     );
 
     if (googleConsentCookie) {
-      console.log("Consent already.");
       // If the cookie is found, assume consent is already given.
       return;
     }
+
+    console.log("Google box wasn't accepted yet");
 
     const possibleSelectors = [
       'button[aria-label="Consent"]',

@@ -33,7 +33,7 @@ export class DostorClient extends PublisherPage {
 
         const titleText = await title.evaluate((el) => el.innerText.trim());
 
-        const publisherArticleId = href.replace("/", "");
+        const publisherArticleId = DostorClient.extractIdFromUrl(href);
 
         const image = await article.$("img");
         const imagePath = image ? await image.evaluate((el) => el.src) : null;
@@ -154,5 +154,10 @@ export class DostorClient extends PublisherPage {
     // Create a UTC timestamp from the parsed values.
     const utcTimestamp = Date.UTC(year, month, day, hour, minute);
     return new Date(utcTimestamp);
+  }
+
+  static extractIdFromUrl(url: string): string | null {
+    const match = url.match(/\/(\d+)(?:#|$)/);
+    return match ? match[1] : null;
   }
 }
