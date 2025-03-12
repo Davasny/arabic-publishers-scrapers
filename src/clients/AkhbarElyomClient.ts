@@ -6,7 +6,7 @@ export class AkhbarElyomClient extends PublisherPage {
   private readonly url = "https://akhbarelyom.com";
 
   constructor(page: PageWithCursor) {
-    super(page);
+    super(page, 1_000);
   }
 
   private prepareQuery(query: string): string {
