@@ -1,27 +1,29 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { AkhbarElyom } from "./AkhbarElyom";
+import { AkhbarElyomClient } from "./AkhbarElyomClient";
 import { ConnectResult, PageWithCursor } from "puppeteer-real-browser";
 import { SearchResult } from "./PublisherPage";
 import { getBrowser } from "./BrowserFactory";
 import { GERD } from "@/search/i18n";
 
-describe("Check AkhbarElyom date helper", () => {
+describe("Check AkhbarElyomClient date helper", () => {
   it("Should return valid date for for PM", () => {
     const arabicDate = "الثلاثاء، 31 ديسمبر 2024 - 11:59 م";
-    const convertedDate = AkhbarElyom.convertArabicDateToJSDate(arabicDate);
+    const convertedDate =
+      AkhbarElyomClient.convertArabicDateToJSDate(arabicDate);
 
     expect(convertedDate).toEqual(new Date("2024-12-31T23:59:00.000Z"));
   });
 
   it("Should return valid date for for AM", () => {
     const arabicDate = "السبت، 01 يناير 2000 - 01:01 ص";
-    const convertedDate = AkhbarElyom.convertArabicDateToJSDate(arabicDate);
+    const convertedDate =
+      AkhbarElyomClient.convertArabicDateToJSDate(arabicDate);
 
     expect(convertedDate).toEqual(new Date("2000-01-01T01:01:00.000Z"));
   });
 });
 
-describe("Check AkhbarElyom scraper", async () => {
+describe("Check AkhbarElyomClient scraper", async () => {
   let page: PageWithCursor;
   let browser: ConnectResult["browser"];
 
@@ -37,7 +39,7 @@ describe("Check AkhbarElyom scraper", async () => {
   });
 
   it("Checks if first search result is returned", async () => {
-    const ae = new AkhbarElyom(page);
+    const ae = new AkhbarElyomClient(page);
     const result = await ae.getFirstResult(GERD.fullNameArabic);
 
     expect(result.title).toBeDefined();
@@ -45,7 +47,7 @@ describe("Check AkhbarElyom scraper", async () => {
   });
 
   it("Checks if search pagination endpoint returns proper results", async () => {
-    const ae = new AkhbarElyom(page);
+    const ae = new AkhbarElyomClient(page);
 
     const firstSearchResult: SearchResult = {
       url: "https://akhbarelyom.com/news/newdetails/4020261/1/8-%D8%AA%D8%AD%D8%AF%D9%8A%D8%A7%D8%AA-%D8%A3%D9%85%D8%A7%D9%85-%D8%A7%D9%84%D8%B1%D8%A6%D8%A7%D8%B3%D8%A9-%D8%A7%D9%84%D8%AC%D8%AF%D9%8A%D8%AF%D8%A9-%D9%84%D9%84%D8%A7%D8%AA%D8%AD%D8%A7%D8%AF-%D8%A7%D9%84",
@@ -64,7 +66,7 @@ describe("Check AkhbarElyom scraper", async () => {
   });
 
   it("Checks if getSearchResult returns valid non-duplicated results", async () => {
-    const ae = new AkhbarElyom(page);
+    const ae = new AkhbarElyomClient(page);
     const results = await ae.getSearchResult(GERD.fullNameArabic);
 
     expect(results.length).toBeGreaterThan(1);
@@ -75,7 +77,7 @@ describe("Check AkhbarElyom scraper", async () => {
   });
 
   it("Checks if article is parsed correctly", async () => {
-    const ae = new AkhbarElyom(page);
+    const ae = new AkhbarElyomClient(page);
     const searchResult: SearchResult = {
       url: "https://akhbarelyom.com/news/newdetails/3878112/1/محمد-بركات-يكتب-السد-الإثيوبى",
       title: "محمد بركات يكتب: السد الإثيوبى",

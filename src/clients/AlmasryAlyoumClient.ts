@@ -1,7 +1,7 @@
 import { Article, PublisherPage, SearchResult } from "./PublisherPage";
 import { PageWithCursor } from "puppeteer-real-browser";
 
-export class AlmasryAlyoum extends PublisherPage {
+export class AlmasryAlyoumClient extends PublisherPage {
   private readonly url = "https://www.almasryalyoum.com";
 
   constructor(page: PageWithCursor) {
@@ -43,7 +43,7 @@ export class AlmasryAlyoum extends PublisherPage {
           url,
           title,
           imagePath,
-          // todo: check if AlmasryAlyoum has some way to extract id
+          // todo: check if AlmasryAlyoumClient has some way to extract id
           publisherArticleId: null,
         };
 
@@ -75,7 +75,9 @@ export class AlmasryAlyoum extends PublisherPage {
 
     let publishDate = null;
     if ("datePublished" in jsonLdData) {
-      publishDate = AlmasryAlyoum.convertStringToDate(jsonLdData.datePublished);
+      publishDate = AlmasryAlyoumClient.convertStringToDate(
+        jsonLdData.datePublished,
+      );
     }
 
     const paragraphs = await this.page.evaluate(() => {

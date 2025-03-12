@@ -2,7 +2,7 @@ import { PageWithCursor } from "puppeteer-real-browser";
 import { Article, PublisherPage, SearchResult } from "./PublisherPage";
 import { arabicMonths } from "@/search/consts";
 
-export class AkhbarElyom extends PublisherPage {
+export class AkhbarElyomClient extends PublisherPage {
   private readonly url = "https://akhbarelyom.com";
 
   constructor(page: PageWithCursor) {
@@ -143,7 +143,7 @@ export class AkhbarElyom extends PublisherPage {
     }
 
     const publishedTimeParsed =
-      AkhbarElyom.convertArabicDateToJSDate(publishedTime);
+      AkhbarElyomClient.convertArabicDateToJSDate(publishedTime);
 
     if (!publishedTimeParsed) {
       throw new Error("Failed to parse published time");

@@ -1,26 +1,26 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { ConnectResult, PageWithCursor } from "puppeteer-real-browser";
 import { getBrowser } from "@/clients/BrowserFactory";
-import { Dostor } from "@/clients/Dostor";
+import { DostorClient } from "@/clients/DostorClient";
 import { SearchResult } from "@/clients/PublisherPage";
 
 describe("Check dostor helpers", () => {
   it("Checks date conversion PM", () => {
-    const result = Dostor.convertArabicDateToJSDate(
+    const result = DostorClient.convertArabicDateToJSDate(
       "الجمعة 31/01/2025 07:23 م",
     );
     expect(result).toEqual(new Date("2025-01-31T19:23:00.000Z"));
   });
 
   it("Checks date conversion AM", () => {
-    const result = Dostor.convertArabicDateToJSDate(
+    const result = DostorClient.convertArabicDateToJSDate(
       "الجمعة 31/01/2025 07:23 ص",
     );
     expect(result).toEqual(new Date("2025-01-31T07:23:00.000Z"));
   });
 });
 
-describe("Check Dostor scraper", async () => {
+describe("Check DostorClient scraper", async () => {
   let page: PageWithCursor;
   let browser: ConnectResult["browser"];
 
@@ -36,14 +36,14 @@ describe("Check Dostor scraper", async () => {
   });
 
   it("Checks if getSearchResult returns valid data", async () => {
-    const dostor = new Dostor(page);
+    const dostor = new DostorClient(page);
     const result = await dostor.getSearchResult("الكبير"); // full name of GERD returns only few results
 
     expect(result.length).toBe(30);
   });
 
   it("Checks if scraper returns valid article without author", async () => {
-    const dostor = new Dostor(page);
+    const dostor = new DostorClient(page);
 
     const searchResult: SearchResult = {
       url: "https://www.dostor.org/4963336",
@@ -60,7 +60,7 @@ describe("Check Dostor scraper", async () => {
   });
 
   it("Checks if scraper returns valid article with author details", async () => {
-    const dostor = new Dostor(page);
+    const dostor = new DostorClient(page);
 
     const searchResult: SearchResult = {
       url: "https://www.dostor.org/4960728",

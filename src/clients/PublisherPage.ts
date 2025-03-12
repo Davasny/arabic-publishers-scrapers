@@ -10,7 +10,7 @@ export interface SearchResult {
 
 export interface Article {
   url: string;
-  // todo: implement title in AkhbarElyom and AlmasryAlyoum
+  // todo: implement title in AkhbarElyomClient and AlmasryAlyoumClient
   title?: string;
   paragraphs: string[];
   publishDate: string;

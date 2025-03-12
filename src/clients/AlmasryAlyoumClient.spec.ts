@@ -1,23 +1,27 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { PageWithCursor, ConnectResult } from "puppeteer-real-browser";
-import { AlmasryAlyoum } from "./AlmasryAlyoum";
+import { AlmasryAlyoumClient } from "./AlmasryAlyoumClient";
 import { GERD } from "@/search/i18n";
 import { SearchResult } from "./PublisherPage";
 import { getBrowser } from "./BrowserFactory";
 
-describe("Check AlmasryAlyoum helpers", () => {
+describe("Check AlmasryAlyoumClient helpers", () => {
   it("Checks if date string is parsed correctly PM", () => {
-    const result = AlmasryAlyoum.convertStringToDate("12/10/2024 3:29:39 PM");
+    const result = AlmasryAlyoumClient.convertStringToDate(
+      "12/10/2024 3:29:39 PM",
+    );
     expect(result).toEqual(new Date("2024-12-10T15:29:39.000Z"));
   });
 
   it("Checks if date string is parsed correctly AM", () => {
-    const result = AlmasryAlyoum.convertStringToDate("5/20/2023 2:17:02 AM");
+    const result = AlmasryAlyoumClient.convertStringToDate(
+      "5/20/2023 2:17:02 AM",
+    );
     expect(result).toEqual(new Date("2023-05-20T02:17:02.000Z"));
   });
 });
 
-describe("Check AlmasryAlyoum scraper", async () => {
+describe("Check AlmasryAlyoumClient scraper", async () => {
   let page: PageWithCursor;
   let browser: ConnectResult["browser"];
 
@@ -33,14 +37,14 @@ describe("Check AlmasryAlyoum scraper", async () => {
   });
 
   it("Checks if search page is parsed correctly", async () => {
-    const aa = new AlmasryAlyoum(page);
+    const aa = new AlmasryAlyoumClient(page);
     const searchResults = await aa.getSearchResult(GERD.fullNameArabic);
 
     expect(searchResults.length).toBe(12);
   });
 
   it("Checks if article page is parsed correctly", async () => {
-    const aa = new AlmasryAlyoum(page);
+    const aa = new AlmasryAlyoumClient(page);
 
     const searchResult: SearchResult = {
       imagePath:

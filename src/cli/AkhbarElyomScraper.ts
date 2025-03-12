@@ -1,4 +1,4 @@
-import { AkhbarElyom } from "@/clients/AkhbarElyom";
+import { AkhbarElyomClient } from "@/clients/AkhbarElyomClient";
 import { getBrowser } from "@/clients/BrowserFactory";
 import { GERD } from "@/search/i18n";
 import { StorageProvider } from "@/storage/StorageProvider";
@@ -10,7 +10,7 @@ const fetchArticlesFromPast = async () => {
   const { page, browser } = await getBrowser({ openDevTools: false });
 
   const storage = new StorageProvider();
-  const client = new AkhbarElyom(page);
+  const client = new AkhbarElyomClient(page);
 
   // fetches articles from past
   // starts in past and goes to the oldest possible
@@ -64,7 +64,7 @@ const fetchLatestArticles = async () => {
   const { page, browser } = await getBrowser({ openDevTools: false });
 
   const storage = new StorageProvider();
-  const client = new AkhbarElyom(page);
+  const client = new AkhbarElyomClient(page);
 
   const newestKnownResult = await storage.getNewestSearchResult(PUBLISHER_NAME);
   let newestId = newestKnownResult
@@ -124,7 +124,7 @@ const getArticles = async () => {
     return;
   }
 
-  const client = new AkhbarElyom(page);
+  const client = new AkhbarElyomClient(page);
 
   for (const article of toScrape) {
     console.log(`Scraping article ${article.url}`);

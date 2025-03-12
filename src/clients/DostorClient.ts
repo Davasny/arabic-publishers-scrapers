@@ -1,7 +1,7 @@
 import { Article, PublisherPage, SearchResult } from "@/clients/PublisherPage";
 import { PageWithCursor } from "puppeteer-real-browser";
 
-export class Dostor extends PublisherPage {
+export class DostorClient extends PublisherPage {
   private readonly url = "https://www.dostor.org";
 
   constructor(page: PageWithCursor) {
