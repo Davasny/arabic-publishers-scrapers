@@ -3,39 +3,63 @@ import { StorageProvider } from "@/storage/StorageProvider";
 import { GERD } from "@/search/i18n";
 import { SearchResultInsert } from "@/storage/schema";
 import { AlmasryAlyoumClient } from "@/clients/AlmasryAlyoumClient";
+import { AhramClient } from "@/clients/AhramClient";
 
 export const initialArticlesListFetch = async (
   publisherName: string,
-  client: DostorClient | AlmasryAlyoumClient,
+  client: DostorClient | AlmasryAlyoumClient | AhramClient,
 ) => {
   const storage = new StorageProvider();
 
   let pageNum = 1;
   while (true) {
-    console.log(`Fetching page ${pageNum}`);
-    const articles = await client.getSearchResult(GERD.renaissanceDam, pageNum);
+    try {
+      console.log(`Fetching page ${pageNum}`);
+      const articles = await client.getSearchResult(
+        GERD.renaissanceDam,
+        pageNum,
+      );
 
-    if (articles.length === 0) {
-      console.log("No more articles found.");
-      break;
+      if (articles.length === 0) {
+        console.log("No more articles found.");
+        break;
+      }
+
+      const dbRows: SearchResultInsert[] = articles.map((result) => ({
+        ...result,
+        publisherName: publisherName,
+        publisherArticleId: parseInt(result.publisherArticleId || "-1"),
+      }));
+
+      console.log(`Saving ${dbRows.length} results`);
+      await storage.saveSearchResult(dbRows);
+
+      const newTimeout = Math.max(client.typicalNetworkTimeout - 1_000, 1_000);
+
+      if (client.typicalNetworkTimeout !== newTimeout) {
+        console.log(`Decreasing network timeout to ${newTimeout / 1000}s`);
+        client.typicalNetworkTimeout = newTimeout;
+      }
+
+      pageNum++;
+    } catch (error) {
+      const newTimeout = Math.min(client.typicalNetworkTimeout + 2_000, 7_000);
+
+      console.error(
+        `Error scraping search results page, increasing network idle timeout to ${newTimeout / 1000}s`,
+      );
+
+      client.typicalNetworkTimeout = newTimeout;
+
+      console.error(error);
+      await new Promise((resolve) => setTimeout(resolve, 10_000));
     }
-
-    const dbRows: SearchResultInsert[] = articles.map((result) => ({
-      ...result,
-      publisherName: publisherName,
-      publisherArticleId: parseInt(result.publisherArticleId || "-1"),
-    }));
-
-    console.log(`Saving ${dbRows.length} results`);
-    await storage.saveSearchResult(dbRows);
-
-    pageNum++;
   }
 };
 
 export const fetchArticles = async (
   publisherName: string,
-  client: DostorClient | AlmasryAlyoumClient,
+  client: DostorClient | AlmasryAlyoumClient | AhramClient,
 ) => {
   const storage = new StorageProvider();
 
