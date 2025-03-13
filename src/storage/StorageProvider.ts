@@ -1,5 +1,5 @@
 import { drizzle, LibSQLDatabase } from "drizzle-orm/libsql";
-import { and, asc, desc, eq, isNull } from "drizzle-orm";
+import { and, asc, desc, eq, gte, isNull, lte } from "drizzle-orm";
 import {
   ArticleInsert,
   articlesTable,
@@ -22,8 +22,22 @@ export class StorageProvider {
       .onConflictDoNothing();
   }
 
-  async getAllArticles(): Promise<ArticleInsert[]> {
-    return this.db.select().from(articlesTable);
+  async getArticles({
+    startDate,
+    endDate,
+  }: {
+    startDate: Date;
+    endDate: Date;
+  }): Promise<ArticleInsert[]> {
+    return this.db
+      .select()
+      .from(articlesTable)
+      .where(
+        and(
+          gte(articlesTable.publishDate, startDate.toISOString()),
+          lte(articlesTable.publishDate, endDate.toISOString()),
+        ),
+      );
   }
 
   async getOldestSearchResult(

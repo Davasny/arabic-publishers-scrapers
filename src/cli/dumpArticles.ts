@@ -4,7 +4,10 @@ import { writeFileSync } from "fs";
 const main = async () => {
   const storage = new StorageProvider();
 
-  const articles = await storage.getAllArticles();
+  const articles = await storage.getArticles({
+    startDate: new Date("2021-01-01"),
+    endDate: new Date("2024-12-31"),
+  });
 
   const fileLines: string[] = articles.flatMap((a) => {
     if (typeof a.paragraphs === "string") {
