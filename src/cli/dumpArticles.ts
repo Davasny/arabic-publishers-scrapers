@@ -34,8 +34,8 @@ const main = async () => {
 
   for (const publisher of publishers) {
     const publisherArticles = await storage.getArticles({
-      startDate: new Date("2021-01-01"),
-      endDate: new Date("2024-12-31"),
+      startDate,
+      endDate,
       publisherName: publisher,
     });
 
