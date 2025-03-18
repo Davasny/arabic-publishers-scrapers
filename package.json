@@ -12,7 +12,8 @@
     "scraper:Ahram": "tsx src/cli/AhramScraper.ts",
     "dumpArticles": "tsx src/cli/dumpArticles.ts",
     "prepare": "husky",
-    "fmt:staged": "lint-staged"
+    "fmt:staged": "lint-staged",
+    "test": "vitest"
   },
   "keywords": [],
   "author": "",
