@@ -1,6 +1,6 @@
 import { AkhbarElyomClient } from "@/clients/AkhbarElyomClient";
 import { getBrowser } from "@/clients/BrowserFactory";
-import { GERD } from "@/search/i18n";
+import { i18n } from "@/consts/i18n";
 import { StorageProvider } from "@/storage/StorageProvider";
 import { SearchResultInsert } from "@/storage/schema";
 
@@ -17,7 +17,7 @@ const fetchArticlesFromPast = async () => {
   const oldestKnownResult = await storage.getOldestSearchResult(PUBLISHER_NAME);
   let lastId = oldestKnownResult ? oldestKnownResult.publisherArticleId : null;
   if (lastId === null) {
-    const firstResult = await client.getFirstResult(GERD.renaissanceDam);
+    const firstResult = await client.getFirstResult(i18n.renaissanceDam);
     if (!firstResult.publisherArticleId) {
       throw new Error("First result has no ID");
     }
@@ -27,7 +27,7 @@ const fetchArticlesFromPast = async () => {
 
   while (true) {
     const newResults = await client.getSearchPage(
-      GERD.renaissanceDam,
+      i18n.renaissanceDam,
       lastId.toString(),
     );
 
@@ -71,7 +71,7 @@ const fetchLatestArticles = async () => {
     ? newestKnownResult.publisherArticleId
     : null;
 
-  const firstResult = await client.getFirstResult(GERD.renaissanceDam);
+  const firstResult = await client.getFirstResult(i18n.renaissanceDam);
 
   if (newestId === firstResult.publisherArticleId) {
     console.log("No new articles to scrape");
@@ -80,7 +80,7 @@ const fetchLatestArticles = async () => {
 
   while (true) {
     const newResults = await client.getSearchPage(
-      GERD.renaissanceDam,
+      i18n.renaissanceDam,
       firstResult.toString(),
     );
 

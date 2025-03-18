@@ -1,13 +1,3 @@
-export const CAIRO_COORDS = {
-  lat: 30.0444,
-  long: 31.2357,
-};
-
-export const URLS = {
-  AL_AHRAM: "https://gate.ahram.org.eg",
-  AL_MASRY: "https://www.almasryalyoum.com",
-};
-
 export const arabicMonths = {
   يناير: 1,
   فبراير: 2,

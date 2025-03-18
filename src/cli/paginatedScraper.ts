@@ -1,6 +1,6 @@
 import { DostorClient } from "@/clients/DostorClient";
 import { StorageProvider } from "@/storage/StorageProvider";
-import { GERD } from "@/search/i18n";
+import { i18n } from "@/consts/i18n";
 import { SearchResultInsert } from "@/storage/schema";
 import { AlmasryAlyoumClient } from "@/clients/AlmasryAlyoumClient";
 import { AhramClient } from "@/clients/AhramClient";
@@ -16,7 +16,7 @@ export const initialArticlesListFetch = async (
     try {
       console.log(`Fetching page ${pageNum}`);
       const articles = await client.getSearchResult(
-        GERD.renaissanceDam,
+        i18n.renaissanceDam,
         pageNum,
       );
 

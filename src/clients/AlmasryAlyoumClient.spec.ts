@@ -1,7 +1,7 @@
 import { afterAll, assert, beforeAll, describe, expect, it } from "vitest";
 import { PageWithCursor, ConnectResult } from "puppeteer-real-browser";
 import { AlmasryAlyoumClient } from "./AlmasryAlyoumClient";
-import { GERD } from "@/search/i18n";
+import { i18n } from "@/consts/i18n";
 import { SearchResult } from "./PublisherPage";
 import { getBrowser } from "./BrowserFactory";
 
@@ -38,7 +38,7 @@ describe("Check AlmasryAlyoumClient scraper", async () => {
 
   it("Checks if search page is parsed correctly", async () => {
     const aa = new AlmasryAlyoumClient(page);
-    const searchResults = await aa.getSearchResult(GERD.fullNameArabic);
+    const searchResults = await aa.getSearchResult(i18n.fullNameArabic);
 
     expect(searchResults.length).toBe(12);
 

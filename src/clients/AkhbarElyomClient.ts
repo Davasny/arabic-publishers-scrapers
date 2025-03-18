@@ -1,6 +1,7 @@
 import { PageWithCursor } from "puppeteer-real-browser";
 import { Article, PublisherPage, SearchResult } from "./PublisherPage";
-import { arabicMonths } from "@/search/consts";
+
+import { arabicMonths } from "@/consts/arabicMonths";
 
 export class AkhbarElyomClient extends PublisherPage {
   private readonly url = "https://akhbarelyom.com";

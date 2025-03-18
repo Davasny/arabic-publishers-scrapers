@@ -3,7 +3,7 @@ import { AkhbarElyomClient } from "./AkhbarElyomClient";
 import { ConnectResult, PageWithCursor } from "puppeteer-real-browser";
 import { SearchResult } from "./PublisherPage";
 import { getBrowser } from "./BrowserFactory";
-import { GERD } from "@/search/i18n";
+import { i18n } from "@/consts/i18n";
 
 describe("Check AkhbarElyomClient date helper", () => {
   it("Should return valid date for for PM", () => {
@@ -40,7 +40,7 @@ describe("Check AkhbarElyomClient scraper", async () => {
 
   it("Checks if first search result is returned", async () => {
     const ae = new AkhbarElyomClient(page);
-    const result = await ae.getFirstResult(GERD.fullNameArabic);
+    const result = await ae.getFirstResult(i18n.fullNameArabic);
 
     expect(result.title).toBeDefined();
     expect(result.url).toBeDefined();
@@ -58,7 +58,7 @@ describe("Check AkhbarElyomClient scraper", async () => {
     };
 
     const result = await ae.getSearchPage(
-      GERD.fullNameArabic,
+      i18n.fullNameArabic,
       firstSearchResult.publisherArticleId,
     );
 
@@ -67,7 +67,7 @@ describe("Check AkhbarElyomClient scraper", async () => {
 
   it("Checks if getSearchResult returns valid non-duplicated results", async () => {
     const ae = new AkhbarElyomClient(page);
-    const results = await ae.getSearchResult(GERD.fullNameArabic);
+    const results = await ae.getSearchResult(i18n.fullNameArabic);
 
     expect(results.length).toBeGreaterThan(1);
     const firstResult = results[0];

@@ -1,7 +1,7 @@
 import { afterAll, assert, beforeAll, describe, expect, it } from "vitest";
 import { ConnectResult, PageWithCursor } from "puppeteer-real-browser";
 import { getBrowser } from "@/clients/BrowserFactory";
-import { GERD } from "@/search/i18n";
+import { i18n } from "@/consts/i18n";
 import { AhramClient } from "@/clients/AhramClient";
 import { SearchResult } from "@/clients/PublisherPage";
 
@@ -40,7 +40,7 @@ describe("Check AhramClient scraper", async () => {
 
   it("Ensures search page results returns valid number of records", async () => {
     const client = new AhramClient(page);
-    const result = await client.getSearchResult(GERD.renaissanceDam);
+    const result = await client.getSearchResult(i18n.renaissanceDam);
 
     // number per page has to be configured in client code
     expect(result.length).toBe(20);
