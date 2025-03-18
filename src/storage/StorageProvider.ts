@@ -1,5 +1,5 @@
 import { drizzle, LibSQLDatabase } from "drizzle-orm/libsql";
-import { and, asc, desc, eq, gte, isNull, lte } from "drizzle-orm";
+import { and, asc, desc, eq, gte, isNull, lte, SQL } from "drizzle-orm";
 import {
   ArticleInsert,
   articlesTable,
@@ -25,19 +25,53 @@ export class StorageProvider {
   async getArticles({
     startDate,
     endDate,
+    publisherName,
   }: {
-    startDate: Date;
-    endDate: Date;
+    startDate?: Date;
+    endDate?: Date;
+    publisherName?: SearchResultSelect["publisherName"];
   }): Promise<ArticleInsert[]> {
+    const conditions: SQL[] = [];
+
+    if (startDate) {
+      conditions.push(gte(articlesTable.publishDate, startDate.toISOString()));
+    }
+
+    if (endDate) {
+      conditions.push(lte(articlesTable.publishDate, endDate.toISOString()));
+    }
+
+    if (publisherName) {
+      conditions.push(eq(searchResultsTable.publisherName, publisherName));
+    }
+
     return this.db
-      .select()
+      .select({
+        id: articlesTable.id,
+        searchResultId: articlesTable.searchResultId,
+        publisherArticleId: articlesTable.publisherArticleId,
+        publishDate: articlesTable.publishDate,
+        title: articlesTable.title,
+        paragraphs: articlesTable.paragraphs,
+      })
       .from(articlesTable)
-      .where(
-        and(
-          gte(articlesTable.publishDate, startDate.toISOString()),
-          lte(articlesTable.publishDate, endDate.toISOString()),
-        ),
-      );
+      .leftJoin(
+        searchResultsTable,
+        eq(articlesTable.searchResultId, searchResultsTable.id),
+      )
+      .where(and(...conditions));
+  }
+
+  async getAvailablePublishers(): Promise<
+    SearchResultSelect["publisherName"][]
+  > {
+    const results = await this.db
+      .selectDistinct({ publisherName: searchResultsTable.publisherName })
+      .from(searchResultsTable);
+
+    return results.flatMap((result) =>
+      result.publisherName === null ? [] : [result.publisherName],
+    );
   }
 
   async getOldestSearchResult(
